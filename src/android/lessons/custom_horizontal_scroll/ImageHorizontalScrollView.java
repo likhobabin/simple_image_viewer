@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.PointF;
+import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.*;
@@ -59,104 +60,104 @@ public class ImageHorizontalScrollView extends HorizontalScrollView implements G
 
 	}
 
-	private static class ImageBounds {
+	private static class ImageBorders {
 
-		public int[][] imageBoundsMatrix;
+		public int[][] imageBordersMatrix;
 
-		public ImageBounds() {
-			imageBoundsMatrix = new int[4][2];
-			for (int i = 0; i < imageBoundsMatrix.length; i++) {
-				imageBoundsMatrix[i] = new int[2];
+		public ImageBorders() {
+			imageBordersMatrix = new int[4][2];
+			for (int i = 0; i < imageBordersMatrix.length; i++) {
+				imageBordersMatrix[i] = new int[2];
 			}
 		}
 
-		public boolean checkEdges(float[] imageMatrix) {
+		public boolean checkBorders(float[] imageMatrix) {
 			return checkLeftTop(imageMatrix) && checkRightTop(imageMatrix) && checkLeftBottom(imageMatrix)
 				&& checkRightBottom(imageMatrix);
 		}
 
-		public void correctEdges(float[] imageMatrix) {
+		public void correctBorders(float[] imageMatrix) {
 			if (!checkLeftTop(imageMatrix)) {
-				if (imageBoundsMatrix[0][0] + imageMatrix[2] > imageBoundsMatrix[0][0]) {
-					imageMatrix[2] = imageBoundsMatrix[0][0];
+				if (imageBordersMatrix[0][0] + imageMatrix[2] > imageBordersMatrix[0][0]) {
+					imageMatrix[2] = imageBordersMatrix[0][0];
 				} else {
-					imageMatrix[5] = imageBoundsMatrix[0][1];
+					imageMatrix[5] = imageBordersMatrix[0][1];
 				}
 			}
 			if (!checkRightTop(imageMatrix)) {
-				float transformationX = ImageUtils.getTransformationX(imageBoundsMatrix[1][0], imageMatrix);
+				float transformationX = ImageUtils.getTransformationX(imageBordersMatrix[1][0], imageMatrix);
 
-				if (transformationX < imageBoundsMatrix[1][0]) {
-					imageMatrix[2] += imageBoundsMatrix[1][0] - transformationX;
+				if (transformationX < imageBordersMatrix[1][0]) {
+					imageMatrix[2] += imageBordersMatrix[1][0] - transformationX;
 				} else {
-					imageMatrix[5] = imageBoundsMatrix[1][1];
+					imageMatrix[5] = imageBordersMatrix[1][1];
 				}
 			}
 			if (!checkLeftBottom(imageMatrix)) {
-				float transformationY = ImageUtils.getTransformationY(imageBoundsMatrix[2][1], imageMatrix);
-				if (transformationY < imageBoundsMatrix[2][1]) {
-					imageMatrix[5] += imageBoundsMatrix[2][1] - transformationY;
+				float transformationY = ImageUtils.getTransformationY(imageBordersMatrix[2][1], imageMatrix);
+				if (transformationY < imageBordersMatrix[2][1]) {
+					imageMatrix[5] += imageBordersMatrix[2][1] - transformationY;
 				} else {
-					imageMatrix[2] = imageBoundsMatrix[2][0];
+					imageMatrix[2] = imageBordersMatrix[2][0];
 				}
 			}
 			if (!checkRightBottom(imageMatrix)) {
-				float transformationX = ImageUtils.getTransformationX(imageBoundsMatrix[3][0], imageMatrix);
-				float transformationY = ImageUtils.getTransformationY(imageBoundsMatrix[3][1], imageMatrix);
-				if (transformationX < imageBoundsMatrix[3][0]) {
-					imageMatrix[2] += imageBoundsMatrix[3][0] - transformationX;
+				float transformationX = ImageUtils.getTransformationX(imageBordersMatrix[3][0], imageMatrix);
+				float transformationY = ImageUtils.getTransformationY(imageBordersMatrix[3][1], imageMatrix);
+				if (transformationX < imageBordersMatrix[3][0]) {
+					imageMatrix[2] += imageBordersMatrix[3][0] - transformationX;
 				} else {
-					imageMatrix[5] += imageBoundsMatrix[3][1] - transformationY;
+					imageMatrix[5] += imageBordersMatrix[3][1] - transformationY;
 				}
 			}
 		}
 
-		public void setEdges(ImageView imageView, int[] displayMetrics) {
+		public void setBorders(ImageView imageView, int[] displayMetrics) {
 			int[] imageSize = new int[2];
 
 			ImageUtils.getImageSize(imageView, imageSize);
 
-			imageBoundsMatrix[0][0] = 0;
-			imageBoundsMatrix[0][1] = 0;
+			imageBordersMatrix[0][0] = 0;
+			imageBordersMatrix[0][1] = 0;
 
-			imageBoundsMatrix[1][0] = displayMetrics[0];
-			imageBoundsMatrix[1][1] = imageBoundsMatrix[0][1];
+			imageBordersMatrix[1][0] = displayMetrics[0];
+			imageBordersMatrix[1][1] = imageBordersMatrix[0][1];
 
-			imageBoundsMatrix[2][0] = 0;
-			imageBoundsMatrix[2][1] = imageSize[1];
+			imageBordersMatrix[2][0] = 0;
+			imageBordersMatrix[2][1] = imageSize[1];
 
-			imageBoundsMatrix[3][0] = displayMetrics[0];
-			imageBoundsMatrix[3][1] = imageSize[1];
+			imageBordersMatrix[3][0] = displayMetrics[0];
+			imageBordersMatrix[3][1] = imageSize[1];
 		}
 
 		private boolean checkLeftTop(float[] imageMatrix) {
-			return imageBoundsMatrix[0][0] + imageMatrix[2] <= imageBoundsMatrix[0][0]
-				&& imageBoundsMatrix[0][1] + imageMatrix[5] <= imageBoundsMatrix[0][1];
+			return imageBordersMatrix[0][0] + imageMatrix[2] <= imageBordersMatrix[0][0]
+				&& imageBordersMatrix[0][1] + imageMatrix[5] <= imageBordersMatrix[0][1];
 
 		}
 
 		private boolean checkRightTop(float[] imageMatrix) {
-			float transformationX = ImageUtils.getTransformationX(imageBoundsMatrix[1][0], imageMatrix);
-			return transformationX >= imageBoundsMatrix[1][0]
-				&& imageBoundsMatrix[1][1] + imageMatrix[5] <= imageBoundsMatrix[1][1];
+			float transformationX = ImageUtils.getTransformationX(imageBordersMatrix[1][0], imageMatrix);
+			return transformationX >= imageBordersMatrix[1][0]
+				&& imageBordersMatrix[1][1] + imageMatrix[5] <= imageBordersMatrix[1][1];
 
 		}
 
 		private boolean checkLeftBottom(float[] imageMatrix) {
-			float transformationY = ImageUtils.getTransformationY(imageBoundsMatrix[2][1], imageMatrix);
-			return imageBoundsMatrix[2][0] + imageMatrix[2] <= imageBoundsMatrix[2][0]
-				&& transformationY >= imageBoundsMatrix[2][1];
+			float transformationY = ImageUtils.getTransformationY(imageBordersMatrix[2][1], imageMatrix);
+			return imageBordersMatrix[2][0] + imageMatrix[2] <= imageBordersMatrix[2][0]
+				&& transformationY >= imageBordersMatrix[2][1];
 
 		}
 
 		private boolean checkRightBottom(float[] imageMatrix) {
 			float transformationX
-				= ImageUtils.getTransformationX(imageBoundsMatrix[3][0], imageMatrix);
+				= ImageUtils.getTransformationX(imageBordersMatrix[3][0], imageMatrix);
 
 			float transformationY
-				= ImageUtils.getTransformationY(imageBoundsMatrix[3][1], imageMatrix);
+				= ImageUtils.getTransformationY(imageBordersMatrix[3][1], imageMatrix);
 
-			return transformationX >= imageBoundsMatrix[3][0] && transformationY >= imageBoundsMatrix[3][1];
+			return transformationX >= imageBordersMatrix[3][0] && transformationY >= imageBordersMatrix[3][1];
 		}
 
 	}
@@ -210,43 +211,47 @@ public class ImageHorizontalScrollView extends HorizontalScrollView implements G
 
 	}
 
-	private static class ImageLoaderHandler implements TaskHandler {
+	private static class ImageLoaderHandler implements TaskHandler<String, String, String> {
 
 		private final ImageHorizontalScrollView hsv;
 
 		private final LinearLayout hsvLayout;
 
-		private Integer[] taskParams;
+		private String[] taskParams;
+
+		private boolean isSchedule;
 
 		public ImageLoaderHandler(ImageHorizontalScrollView hsv, LinearLayout hsvLayout) {
 			this.hsv = hsv;
 			this.hsvLayout = hsvLayout;
 		}
 
-		public void init(Integer... taskParams) {
+		public void init(String... taskParams) {
 			this.taskParams = taskParams;
+			this.isSchedule = true;
 		}
 
 		@Override
 		public boolean isSchedule() {
-			return taskParams != null && taskParams.length != 0;
+			return isSchedule;
 		}
 
 		@Override
 		public  void reset() {
 			taskParams = null;
+			isSchedule = false;
 		}
 
 		@Override
-		public void executeTask() {
-			new ImageLoaderTask(hsv, hsvLayout).execute(taskParams);
+		public AsyncTask<String, String, String> executeTask() {
+			return new ImageLoaderTask(hsv, hsvLayout).execute(taskParams);
 		}
 
 	}
 
 	private MotionProcessType motionProcess = MotionProcessType.NONE;
 
-	private ImageBounds imageBounds = new ImageBounds();
+	private ImageBorders imageBorders = new ImageBorders();
 
 	private final GestureDetector gestureDetector;
 
@@ -272,13 +277,13 @@ public class ImageHorizontalScrollView extends HorizontalScrollView implements G
 
 	private View pbl;
 
-	private ImageLoaderTask imgLoader;
-
-	private LinearLayout scrollViewLayout;
+	private LinearLayout horizScrollViewLayout;
 
 	private ScrollHandler scrollHandler;
 
 	private ImageLoaderHandler taskHandler;
+
+	private AsyncTask<String, String, String> progressTask;
 
 	private final ImageItem[] imageItems = {
 		new ImageItem(IMG_INDEX_MASK),
@@ -303,18 +308,17 @@ public class ImageHorizontalScrollView extends HorizontalScrollView implements G
 		gestureDetector = new GestureDetector(context, this);
 	}
 
-	public void setViewList(Integer linearLayoutId, Activity activity) {
+	public void setViewList(Integer horizScrollViewLayoutId, Activity activity) {
 		displayMetrics = ImageUtils.getDisplayMetric(activity);
-		scrollViewLayout = (LinearLayout) findViewById(linearLayoutId);
-		scrollViewLayout.addView(getPbl());
+		horizScrollViewLayout = (LinearLayout) findViewById(horizScrollViewLayoutId);
+		horizScrollViewLayout.addView(getPbl());
 
-		imgLoader = new ImageLoaderTask(this, scrollViewLayout);
-		imgLoader.execute(imageIndex, linearLayoutId);
+		getImageLoaderHandler().init();
 	}
 
 	public void updateImageBounds() {
 		ImageView currImage = (ImageView) findViewById(imageIndex ^ IMG_INDEX_MASK);
-		imageBounds.setEdges(currImage, displayMetrics);
+		imageBorders.setBorders(currImage, displayMetrics);
 	}
 
 	public ImageItem[] getImageItems() {
@@ -327,6 +331,36 @@ public class ImageHorizontalScrollView extends HorizontalScrollView implements G
 		int[] dstDimension = ImageUtils.createDimension();
 		ImageUtils.getImageSize(imageView, dstDimension);
 		getImageSizeList().add(dstDimension);
+	}
+
+	public int getImageIndex() {
+		return imageIndex;
+	}
+
+	public int[] getDisplayMetrics() {
+		return displayMetrics;
+	}
+
+	public View getPbl() {
+		if (pbl == null) {
+			LayoutInflater inflater = (LayoutInflater) getContext().getSystemService
+				(Context.LAYOUT_INFLATER_SERVICE);
+
+			pbl = inflater.inflate(R.layout.progress_bar, this, false);
+			LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(displayMetrics[0],
+				displayMetrics[1]);
+
+			lp.gravity = Gravity.FILL_HORIZONTAL | Gravity.CENTER_VERTICAL;
+			pbl.setLayoutParams(lp);
+		}
+		return pbl;
+	}
+
+	public PointF getStartPoint() {
+		if (startPoint == null) {
+			startPoint = new PointF();
+		}
+		return startPoint;
 	}
 
 	@Override
@@ -388,6 +422,11 @@ public class ImageHorizontalScrollView extends HorizontalScrollView implements G
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
+		if (progressTask != null && (progressTask.getStatus() == AsyncTask.Status.RUNNING
+			|| progressTask.getStatus() == AsyncTask.Status.PENDING)) {
+			return true;
+		}
+
 		if (motionProcess != MotionProcessType.ZOOM &&
 			motionProcess != MotionProcessType.DRAG &&
 			super.onTouchEvent(event) &&
@@ -449,7 +488,6 @@ public class ImageHorizontalScrollView extends HorizontalScrollView implements G
 				float[] mx_values = new float[9];
 				if (event.getPointerCount() == 2 && motionProcess == MotionProcessType.ZOOM) {
 					Log.d("IHSV_OnTouch", "Event onZoom");
-
 					updateFingerPoints(event);
 					float newDist = ImageUtils.calcDistance(getFfPoint(), getSfPoint());
 					imageItem.getMatrix().set(imageItem.getSavedMatrix());
@@ -461,8 +499,9 @@ public class ImageHorizontalScrollView extends HorizontalScrollView implements G
 
 					float preScaleWidth = mx_values[0] * imageItem.origDimension[0];
 					float preScaleHeight = mx_values[4] * imageItem.origDimension[1];
+
 					if (preScaleWidth < imageItem.origDimension[0] || preScaleHeight < imageItem.origDimension[1]
-						|| !imageBounds.checkEdges(mx_values)) {
+						|| !imageBorders.checkBorders(mx_values)) {
 
 						imageItem.getMatrix().reset();
 					} else {
@@ -476,8 +515,8 @@ public class ImageHorizontalScrollView extends HorizontalScrollView implements G
 					mx_values[2] += event.getX() - getStartPoint().x;
 					mx_values[5] += event.getY() - getStartPoint().y;
 
-					if (!imageBounds.checkEdges(mx_values)) {
-						imageBounds.correctEdges(mx_values);
+					if (!imageBorders.checkBorders(mx_values)) {
+						imageBorders.correctBorders(mx_values);
 						imageItem.getMatrix().setValues(mx_values);
 					} else {
 						imageItem.getMatrix().postTranslate(
@@ -516,32 +555,9 @@ public class ImageHorizontalScrollView extends HorizontalScrollView implements G
 		}
 
 		if (getImageLoaderHandler().isSchedule()) {
-			getImageLoaderHandler().executeTask();
+			progressTask = getImageLoaderHandler().executeTask();
 			getImageLoaderHandler().reset();
 		}
-	}
-
-	int getImageIndex() {
-		return imageIndex;
-	}
-
-	int[] getDisplayMetrics() {
-		return displayMetrics;
-	}
-
-	View getPbl() {
-		if (pbl == null) {
-			LayoutInflater inflater = (LayoutInflater) getContext().getSystemService
-				(Context.LAYOUT_INFLATER_SERVICE);
-
-			pbl = inflater.inflate(R.layout.progress_bar, this, false);
-			LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(displayMetrics[0],
-				displayMetrics[1]);
-
-			lp.gravity = Gravity.FILL_HORIZONTAL | Gravity.CENTER_VERTICAL;
-			pbl.setLayoutParams(lp);
-		}
-		return pbl;
 	}
 
 	private List<int[]> getImageSizeList() {
@@ -556,27 +572,28 @@ public class ImageHorizontalScrollView extends HorizontalScrollView implements G
 		boolean isPaging = isForward ? getImageSizeList().get(imageIndex)[0] / 2 >= ev2X :
 			getImageSizeList().get(imageIndex)[0] / 2 <= ev2X;
 
+		boolean backToTail = !isForward && imageIndex - 1 < 0;
 		boolean isSmoothScroll = false;
 
 		Log.d("IHSV", "processScroll imageIndex: " + imageIndex + " isForward: " + isForward + " isPaging: " + isPaging);
 
-		if (isPaging) {
+		if (isPaging && !backToTail) {
 			if (isForward) {
 				isSmoothScroll = imageIndex + 1 != imageItems.length;
 				imageIndex = ++imageIndex % imageItems.length;
 			} else {
 				isSmoothScroll = imageIndex - 1 >= 0;
-				imageIndex = imageIndex - 1 < 0 ? imageItems.length - 1 : --imageIndex;
+				--imageIndex;
 			}
 
 			if (!imageItems[imageIndex].isLoad) {
-				scrollViewLayout.addView(getPbl());
+				horizScrollViewLayout.addView(getPbl());
 				if (isSmoothScroll) {
 					getScrollHandler().init(imageIndex * displayMetrics[0], 0, true);
 				} else {
 					getScrollHandler().init(imageIndex * displayMetrics[0], 0, true);
 				}
-				getImageLoaderHandler().init(imageItems[imageIndex].id);
+				getImageLoaderHandler().init(String.valueOf(isForward));
 
 			} else  {
 				if (isSmoothScroll) {
@@ -611,13 +628,6 @@ public class ImageHorizontalScrollView extends HorizontalScrollView implements G
 		return midPoint;
 	}
 
-	public PointF getStartPoint() {
-		if (startPoint == null) {
-			startPoint = new PointF();
-		}
-		return startPoint;
-	}
-
 	private void updateFingerPoints(MotionEvent event) {
 		getFfPoint().set(event.getX(0), event.getY(0));
 		getSfPoint().set(event.getX(1), event.getY(1));
@@ -632,7 +642,7 @@ public class ImageHorizontalScrollView extends HorizontalScrollView implements G
 
 	private ImageLoaderHandler getImageLoaderHandler() {
 		if (taskHandler == null) {
-			taskHandler = new ImageLoaderHandler(this, scrollViewLayout);
+			taskHandler = new ImageLoaderHandler(this, horizScrollViewLayout);
 		}
 
 		return taskHandler;

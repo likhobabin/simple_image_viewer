@@ -1,13 +1,9 @@
 package android.lessons.custom_horizontal_scroll;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -15,34 +11,29 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 
-import static android.lessons.custom_horizontal_scroll.ImageUtils.*;
+import static android.lessons.custom_horizontal_scroll.ImageUtils.IMG_INDEX_MASK;
+import static android.lessons.custom_horizontal_scroll.ImageUtils.IMG_URL_ARRAY;
 
 /**
  * Ilya <ilya.likhobabin@gmail.com>
  */
-public class ImageLoaderTask extends AsyncTask<Integer, String, String> {
+public class ImageLoaderTask extends AsyncTask<String, String, String> {
 
 	private final ImageHorizontalScrollView hsv;
 
-	private final LinearLayout innerLayout;
-
-	private View pbl;
+	private final LinearLayout horizScrollViewLayout;
 
 	private ImageView loadImg;
 
 	private Bitmap loadImgBitmap;
 
-	public ImageLoaderTask(ImageHorizontalScrollView hsv, LinearLayout innerLayout) {
+	public ImageLoaderTask(ImageHorizontalScrollView hsv, LinearLayout horizScrollViewLayout) {
 		this.hsv = hsv;
-		this.innerLayout = innerLayout;
+		this.horizScrollViewLayout = horizScrollViewLayout;
 	}
 
 	@Override
-	protected void onPreExecute() {
-	}
-
-	@Override
-	protected String doInBackground(Integer... params) {
+	protected String doInBackground(String... params) {
 		InputStream iis = null;
 		try {
 			iis = ImageUtils.loadImage(IMG_URL_ARRAY[hsv.getImageIndex()]);
@@ -62,12 +53,6 @@ public class ImageLoaderTask extends AsyncTask<Integer, String, String> {
 			} catch (IOException ex) {
 				Log.e("ImageLoaderTask", "Can't close input stream of the image" + ex.getLocalizedMessage());
 			}
-		}
-
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException ex ) {
-
 		}
 
 		return "";
@@ -93,8 +78,9 @@ public class ImageLoaderTask extends AsyncTask<Integer, String, String> {
 		hsv.getImageItems()[hsv.getImageIndex()].isLoad = true;
 		loadImg.setImageMatrix(hsv.getImageItems()[hsv.getImageIndex()].getMatrix());
 
-		innerLayout.removeView(hsv.getPbl());
-		innerLayout.addView(loadImg);
+		horizScrollViewLayout.removeView(hsv.getPbl());
+		horizScrollViewLayout.addView(loadImg);
+
 		hsv.updateImageBounds();
 		hsv.addImageSize(loadImg);
 	}

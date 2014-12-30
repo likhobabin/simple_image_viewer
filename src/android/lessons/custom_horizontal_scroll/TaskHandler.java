@@ -1,10 +1,12 @@
 package android.lessons.custom_horizontal_scroll;
 
+import android.os.AsyncTask;
+
 /**
  * Ilya <ilya.likhobabin@gmail.com>
  */
-public interface TaskHandler extends Handler {
+public interface TaskHandler<Params, Progress, Result> extends Handler {
 
-	void executeTask();
+	AsyncTask<Params, Progress, Result> executeTask();
 
 }

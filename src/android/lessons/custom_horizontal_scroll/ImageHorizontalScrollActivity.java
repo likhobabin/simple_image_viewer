@@ -13,10 +13,7 @@ public class ImageHorizontalScrollActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		final ImageHorizontalScrollView chsv =
-			(ImageHorizontalScrollView) findViewById(R.id.horizontalScrollView);
-
-		chsv.setViewList(R.id.mainLayout, this);
-
+		final ImageHorizontalScrollView hsv = (ImageHorizontalScrollView) findViewById(R.id.horizontalScrollView);
+		hsv.setViewList(R.id.mainLayout, this);
 	}
 }

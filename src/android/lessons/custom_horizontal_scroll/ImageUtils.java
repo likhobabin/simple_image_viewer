@@ -12,6 +12,8 @@ import android.util.DisplayMetrics;
 import android.util.FloatMath;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import org.apache.commons.io.IOUtils;
@@ -32,7 +34,7 @@ class ImageUtils {
 
 	public static int IMG_INDEX_MASK = 0x10;
 
-	public static String[] IMG_URL_ARRAY = {
+	public static final String[] IMG_URL_ARRAY = {
 		"http://treto.ru/img_lb/Settecento/.IT/per_sito/ambienti/IT-.jpg",
 		"http://treto.ru/img_lb/Settecento/.IT/per_sito/ambienti/IT-2.jpg",
 		"http://treto.ru/img_lb/Settecento/.IT/per_sito/ambienti/IT-4.jpg",
@@ -117,38 +119,14 @@ class ImageUtils {
 	}
 
 	public static ImageView createScaledImageByBitmap(Context context, Bitmap srcBitmap, int screenWidth, int screenHeight) {
-		int bmWidth = srcBitmap.getWidth();
-		int bmHeight = srcBitmap.getHeight();
-		float xScale = ((float) screenWidth) / bmWidth;
-		float yScale = ((float) screenHeight) / bmHeight;
-		float scale = xScale <= yScale ? xScale : yScale;
-		Matrix scaleMatrix = new Matrix();
-		scaleMatrix.postScale(scale, scale);
-		Bitmap scBitmap = Bitmap.createBitmap(srcBitmap, 0, 0, bmWidth, bmHeight,
-			scaleMatrix, true);
+		checkNullArguments(context, srcBitmap);
 
 		ImageView resImg = new ImageView(context);
-		BitmapDrawable scDrBitmap = new BitmapDrawable(null, scBitmap);
+		BitmapDrawable scDrBitmap = new BitmapDrawable(null, srcBitmap);
+
+		resImg.setScaleType(ImageView.ScaleType.MATRIX);
 		resImg.setImageDrawable(scDrBitmap);
-
-		resImg.setImageDrawable(scDrBitmap);
-		LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-			scBitmap.getWidth(), scBitmap.getHeight()
-		);
-
-		layoutParams.gravity = Gravity.FILL_HORIZONTAL | Gravity.CENTER_VERTICAL;
-		if (scBitmap.getWidth() < screenWidth) {
-			int margin = (screenWidth - scBitmap.getWidth()) / 2;
-			layoutParams.leftMargin = margin;
-			layoutParams.rightMargin = margin;
-		}
-		if (scBitmap.getHeight() < screenHeight) {
-			int margin = (screenHeight - scBitmap.getHeight()) / 2;
-			layoutParams.topMargin = margin;
-			layoutParams.bottomMargin = margin;
-		}
-
-		resImg.setLayoutParams(layoutParams);
+		scaleImage(resImg, screenWidth, screenHeight);
 
 		return resImg;
 	}
