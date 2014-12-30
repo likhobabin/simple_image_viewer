@@ -11,6 +11,7 @@ import android.view.*;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -354,6 +355,10 @@ public class ImageHorizontalScrollView extends HorizontalScrollView implements G
 			pbl.setLayoutParams(lp);
 		}
 		return pbl;
+	}
+
+	public ProgressBar getPb() {
+		return (ProgressBar) getPbl().findViewById(R.id.progress_bar);
 	}
 
 	public PointF getStartPoint() {

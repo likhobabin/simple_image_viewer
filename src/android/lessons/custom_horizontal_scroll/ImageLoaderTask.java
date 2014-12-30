@@ -33,11 +33,37 @@ public class ImageLoaderTask extends AsyncTask<String, String, String> {
 	}
 
 	@Override
+	protected void onPreExecute() {
+		hsv.getPb().setProgress(0);
+	}
+
+	@Override
 	protected String doInBackground(String... params) {
 		InputStream iis = null;
 		try {
-			iis = ImageUtils.loadImage(IMG_URL_ARRAY[hsv.getImageIndex()]);
+			long startTime = System.currentTimeMillis();
+
+			iis = ImageUtils.openImageInputStream(IMG_URL_ARRAY[hsv.getImageIndex()]);
 			loadImgBitmap = BitmapFactory.decodeStream(iis);
+
+			long endTime = System.currentTimeMillis();
+			Log.d("ImageLoaderTask", "Lost time (ms) " + (endTime - startTime));
+
+			int bytes = loadImgBitmap.getByteCount();
+			double oneMsByte = (double) (endTime - startTime) / (double) bytes;
+			int onePercentBytes = bytes / 100;
+			double onePercentTime = oneMsByte * onePercentBytes;
+			int count = 0;
+			while (count <= bytes) {
+				count += onePercentBytes;
+				try {
+					Thread.sleep((long)onePercentTime);
+				} catch (InterruptedException ex) {
+					Log.e("ImageLoaderTask", "Error progress calculation");
+				}
+				publishProgress(String.valueOf(count/onePercentBytes));
+			}
+
 		} catch (MalformedURLException ex) {
 			Log.e("ImageLoaderTask", "Image loading error " + ex.getLocalizedMessage());
 		} catch (IOException ex) {
@@ -56,6 +82,11 @@ public class ImageLoaderTask extends AsyncTask<String, String, String> {
 		}
 
 		return "";
+	}
+
+	@Override
+	protected void onProgressUpdate(String... progressValues) {
+		hsv.getPb().setProgress(Integer.valueOf(progressValues[0]));
 	}
 
 	@Override

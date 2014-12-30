@@ -179,7 +179,7 @@ class ImageUtils {
 		}
 	}
 
-	public static InputStream loadImage(String httpPath) throws MalformedURLException, IOException,
+	public static InputStream openImageInputStream(String httpPath) throws MalformedURLException, IOException,
 		IllegalArgumentException {
 		checkNullArguments(httpPath);
 		URL url = new URL(httpPath);
