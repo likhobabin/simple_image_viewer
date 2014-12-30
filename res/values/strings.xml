@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SimpleImageViewer</string>
+    <string name="img_0_uri">http://treto.ru/img_lb/Settecento/.IT/per_sito/ambienti/IT-1.jpg</string>
+    <string name="img_1_uri">http://treto.ru/img_lb/Settecento/.IT/per_sito/ambienti/IT-2.jpg</string>
+    <string name="img_2_uri">http://treto.ru/img_lb/Settecento/.IT/per_sito/ambienti/IT-4.jpg</string>
+    <string name="img_3_uri">http://treto.ru/img_lb/Settecento/.IT/per_sito/ambienti/IT-5.jpg</string>
+    <string name="img_4_uri">http://treto.ru/img_lb/Settecento/.IT/per_sito/ambienti/IT-6.jpg</string>
+</resources>
