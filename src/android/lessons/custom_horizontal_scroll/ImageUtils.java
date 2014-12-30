@@ -131,7 +131,7 @@ class ImageUtils {
 		return resImg;
 	}
 
-	public static int[] getDisplayMetric(Activity anActivity) throws IllegalArgumentException {
+	public static int[] getDisplayMetrics(Activity anActivity) throws IllegalArgumentException {
 		checkNullArguments(anActivity);
 
 		DisplayMetrics metrics = new DisplayMetrics();

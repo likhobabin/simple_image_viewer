@@ -39,7 +39,7 @@ public class ImageHorizontalScrollView extends HorizontalScrollView implements G
 
 		private Matrix savedMatrix;
 
-		private Matrix matrix = new Matrix();
+		private Matrix matrix;
 
 		ImageItem(int id) {
 			this.id = id;
@@ -252,7 +252,7 @@ public class ImageHorizontalScrollView extends HorizontalScrollView implements G
 
 	private MotionProcessType motionProcess = MotionProcessType.NONE;
 
-	private ImageBorders imageBorders = new ImageBorders();
+	private final ImageBorders imageBorders = new ImageBorders();
 
 	private final GestureDetector gestureDetector;
 
@@ -310,7 +310,7 @@ public class ImageHorizontalScrollView extends HorizontalScrollView implements G
 	}
 
 	public void setViewList(Integer horizScrollViewLayoutId, Activity activity) {
-		displayMetrics = ImageUtils.getDisplayMetric(activity);
+		displayMetrics = ImageUtils.getDisplayMetrics(activity);
 		horizScrollViewLayout = (LinearLayout) findViewById(horizScrollViewLayoutId);
 		horizScrollViewLayout.addView(getPbl());
 
