@@ -39,7 +39,9 @@ class ImageUtils {
 		"http://treto.ru/img_lb/Settecento/.IT/per_sito/ambienti/IT-2.jpg",
 		"http://treto.ru/img_lb/Settecento/.IT/per_sito/ambienti/IT-4.jpg",
 		"http://treto.ru/img_lb/Settecento/.IT/per_sito/ambienti/IT-5.jpg",
-		"http://treto.ru/img_lb/Settecento/.IT/per_sito/ambienti/IT-6.jpg"
+		"http://treto.ru/img_lb/Settecento/.IT/per_sito/ambienti/IT-6.jpg",
+		"http://fc04.deviantart.net/fs70/f/2012/149/d/1/bender_rodriguez_by_brinecycling-d51i5kq.jpg",
+		"http://ipadw.ru/ipad/full/2048x2048_1497_bender-futurama-wallpaper-movie.jpg"
 	};
 
 	/**

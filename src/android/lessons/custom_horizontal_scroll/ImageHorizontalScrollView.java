@@ -286,13 +286,14 @@ public class ImageHorizontalScrollView extends HorizontalScrollView implements G
 
 	private AsyncTask<String, String, String> progressTask;
 
-	private final ImageItem[] imageItems = {
-		new ImageItem(IMG_INDEX_MASK),
-		new ImageItem(1 ^ IMG_INDEX_MASK),
-		new ImageItem(2 ^ IMG_INDEX_MASK),
-		new ImageItem(3 ^ IMG_INDEX_MASK),
-		new ImageItem(4 ^ IMG_INDEX_MASK)
-	};
+	private ImageItem[] imageItems;
+
+	{
+		imageItems = new ImageItem[IMG_URL_ARRAY.length];
+		for (int i=0; i < imageItems.length; i++) {
+			imageItems[i] = new ImageItem(i ^ IMG_INDEX_MASK);
+		}
+	}
 
 	public ImageHorizontalScrollView(Context context) {
 		super(context);
@@ -596,7 +597,7 @@ public class ImageHorizontalScrollView extends HorizontalScrollView implements G
 				if (isSmoothScroll) {
 					getScrollHandler().init(imageIndex * displayMetrics[0], 0, true);
 				} else {
-					getScrollHandler().init(imageIndex * displayMetrics[0], 0, true);
+					getScrollHandler().init(imageIndex * displayMetrics[0], 0, false);
 				}
 				getImageLoaderHandler().init(String.valueOf(isForward));
 
